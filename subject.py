@@ -29,15 +29,18 @@ def list_data(id: str, request: Request):
 
 
 #刪除影片紀錄
-@router.delete("/{id}/vedio/{id2}", response_description="Delete a video")
+@router.delete("/{id}/video/{id2}", response_description="Delete a video")
 def delete_video(id: str, id2: str, request: Request, response: Response):
-    owner = request.app.db.vedio.find({"owner_id": id})
-    delete_result = owner.delete_one({"video_name": id2}) #?delete update
+    delete_result = request.app.db.vedio.delete_one(
+        {"_id": id2,
+         "owner_id": id}
+    )
+    # delete_result = old_video.delete #?delete update
 
-    if delete_result.deleted_count == 1:
-        response.status_code = status.HTTP_204_NO_CONTENT
-        return response
-
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"vedio with ID {id} not found")
+    # if delete_result.deleted_count == 0:
+    #     response.status_code = status.HTTP_204_NO_CONTENT
+    #     return response
+    #
+    # raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"vedio with ID {id} not found")
 
 
