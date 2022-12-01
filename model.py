@@ -19,16 +19,16 @@ class Result(BaseModel):
     right: int
 
 class Video(BaseModel):
-    # owner: str
-    # video: List[UploadFile]
-    # video_name: str
+    owner_id: str
+    video_name: str
+    video_path: str
     date: datetime.date
     location: str
 
     class Config:
         schema_extra = {
             "example": {
-                "date": "2022-10-25",
-                "location": "Taipei,my home"
+                "date": "2022-10-23",
+                "location": "hospital"
             }
         }
