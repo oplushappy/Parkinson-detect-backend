@@ -6,8 +6,21 @@ from result import router as result_router
 from video import router as video_router
 from login import router as login_router
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
+origins = [
+    "*",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.client = MongoClient("mongodb+srv://ken:a12345678a@angry.daaorae.mongodb.net/?retryWrites=true&w=majority")
 # app.client = MongoClient()

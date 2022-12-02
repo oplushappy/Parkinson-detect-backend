@@ -14,15 +14,15 @@ ALGORITHM = "HS256"#算法
 ACCESS_TOKEN_EXPIRE_MINUTES = 30#訪問令牌時間
 
 
-# fake_users_db = {
-#     "johndoe": {
-#         "username": "johndoe",
-#         "full_name": "John Doe",
-#         "email": "johndoe@example.com",
-#         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-#         "disabled": False,
-#     }
-# }
+fake_users_db = {
+    "johndoe": {
+        "username": "danny",
+        "full_name": "Danny Chang",
+        "email": "johndoe@example.com",
+        "hashed_password": "$2b$12$ODfYC9l.BpiC.5BimKyBgeYVm0906OkddAwiVnMnS3vTK9Gt/vbIG",
+        "disabled": False,
+    }
+}
 
 
 
