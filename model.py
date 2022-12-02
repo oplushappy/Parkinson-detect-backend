@@ -1,7 +1,8 @@
 import datetime
 from pydantic import BaseModel, Field
 from fastapi import UploadFile
-from typing import List
+from typing import List, Optional, Union
+
 
 class Subject(BaseModel):
     subject: str
@@ -32,3 +33,22 @@ class Video(BaseModel):
                 "location": "hospital"
             }
         }
+
+
+class Token(BaseModel):#返回給用戶token
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None
+
+
+class User(BaseModel):
+    username: str
+    email: Union[str, None] = None
+    full_name: Union[str, None] = None
+    disabled: Union[bool, None] = None
+
+
+class UserInDB(User):
+    hashed_password: str

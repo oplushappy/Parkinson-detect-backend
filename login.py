@@ -1,49 +1,36 @@
 from datetime import datetime, timedelta
 from typing import Union, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, status, APIRouter
+from fastapi import Depends, FastAPI, HTTPException, status, APIRouter, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
+from model import Token, TokenData, User, UserInDB
+
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "1020a32f2f15a5f6bd17ec950607892572585757c14d7dba179bf24af6b4d9f2"
+SECRET_KEY = open("./secret_key", "r").read()
 ALGORITHM = "HS256"#算法
 ACCESS_TOKEN_EXPIRE_MINUTES = 30#訪問令牌時間
 
 
-fake_users_db = {
-    "johndoe": {
-        "username": "danny",
-        "full_name": "Danny Chang",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$ODfYC9l.BpiC.5BimKyBgeYVm0906OkddAwiVnMnS3vTK9Gt/vbIG",
-        "disabled": False,
-    }
-}
+# fake_users_db = {
+#     "johndoe": {
+#         "username": "danny",
+#         "full_name": "Danny Chang",
+#         "email": "johndoe@example.com",
+#         "hashed_password": "$2b$12$ODfYC9l.BpiC.5BimKyBgeYVm0906OkddAwiVnMnS3vTK9Gt/vbIG",
+#         "disabled": False,
+#     }
+# }
 
 
 
-class Token(BaseModel):#返回給用戶token
-    access_token: str
-    token_type: str
 
 
-class TokenData(BaseModel):
-    username: Union[str, None] = None
 
-
-class User(BaseModel):
-    username: str
-    email: Union[str, None] = None
-    full_name: Union[str, None] = None
-    disabled: Union[bool, None] = None
-
-
-class UserInDB(User):
-    hashed_password: str
 
 
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -54,9 +41,7 @@ router = APIRouter()
 
 
 
-# #返回哈希密碼
-# def get_password_hash(password):
-#     return pwd_context.hash(password)
+
 
 
 
@@ -90,7 +75,8 @@ def verify_password(plain_password, hashed_password):
 
 #確認使用者
 def get_user(db, username: str):
-    if username in db:
+    # if username in db:
+    if db.Users.find_one({"username": username}):
         user_dict = db[username]
         return UserInDB(**user_dict)#實例化，數據傳進去
 
@@ -104,8 +90,8 @@ def authenticate_user(fake_db, username: str, password: str):
     return user
 
 @router.post("/jwt/token", response_model=Token)# 1
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(request.app.db.Users, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

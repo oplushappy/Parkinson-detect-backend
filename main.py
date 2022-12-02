@@ -5,6 +5,7 @@ from subject import router as subject_router
 from result import router as result_router
 from video import router as video_router
 from login import router as login_router
+from signup import router as signup_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,6 +31,7 @@ app.include_router(login_router, tags=["login"], prefix="/login")
 app.include_router(subject_router, tags=["subject"], prefix="/subject")
 app.include_router(video_router, tags=["video"], prefix="/video")
 app.include_router(result_router, tags=["result"], prefix="/result")
+app.include_router(signup_router, tags=["SignUp"])
 
 
 
