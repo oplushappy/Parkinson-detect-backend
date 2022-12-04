@@ -17,12 +17,12 @@ async def signup(request: Request, form_data: OAuth2PasswordRequestForm = Depend
         "hashed_password": str(get_password_hash(form_data.password)),
     }
     result = request.app.db.users.insert_one(user)
-    user["id"] = str(result.inserted_id)
-    del user["_id"]
+    # user["id"] = str(result.inserted_id)
+    # del user["_id"]
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires
+        data={"sub": user["username"],"_id":str(result.inserted_id)}, expires_delta=access_token_expires
     )
     user['access_token'] = access_token
 

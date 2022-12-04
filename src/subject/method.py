@@ -15,12 +15,15 @@ def decode_jwt(information):
         jwt_token = information["access_token"]
         payload = jwt.decode(jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        id: str = payload.get("id")
         if username is None:
+            raise credentials_exception
+        if id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
     
-    return username
+    return {username, id} 
 
 def form_change_to_json(information: str):
     information = json.loads(information)

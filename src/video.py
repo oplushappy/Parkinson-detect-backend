@@ -38,12 +38,14 @@ async def upload(request: Request, information: str = Form(), file: UploadFile =
     # jwt_token = information["access_token"]
     # print(await get_current_user(jwt_token))
 
-    username = decode_jwt(information)
-
+    username, id = decode_jwt(information)
+    
 
     path = jsonable_encoder(pathlib.Path(video_name).absolute())
     date = jsonable_encoder(information["date"])
+    # id = jsonable_encoder(information["_id"])
     video = {
+        "subject_id": id,
         "subject": username,
         "video_name": video_name,
         "video_path": path,
