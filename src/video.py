@@ -34,21 +34,23 @@ async def upload(request: Request, information: str = Form(), file: UploadFile =
     with open('{}/{}'.format(save_path ,video_name), "wb") as f:
         f.write(video)
     
-    # information = json.loads(information)
+    information = json.loads(information)
     # jwt_token = information["access_token"]
     # print(await get_current_user(jwt_token))
+
     username = decode_jwt(information)
 
 
     path = jsonable_encoder(pathlib.Path(video_name).absolute())
     date = jsonable_encoder(information["date"])
     video = {
+        "subject": username,
         "video_name": video_name,
         "video_path": path,
         "date": date,
         "location": information["location"]
     }
-    result = request.app.db.video["username"].insert_one(video)
+    result = request.app.db.video.insert_one(video)
     return "ok"
 
 
