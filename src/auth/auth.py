@@ -16,7 +16,7 @@ async def signup(request: Request, form_data: OAuth2PasswordRequestForm = Depend
         "username": form_data.username,
         "hashed_password": str(get_password_hash(form_data.password)),
     }
-    result = request.app.db.Users.insert_one(user)
+    result = request.app.db.users.insert_one(user)
     user["id"] = str(result.inserted_id)
     del user["_id"]
 
@@ -46,3 +46,6 @@ async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequ
 @router.get("/jwt/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
+
+# @router.post("jwt/signout")
+# async def signout():

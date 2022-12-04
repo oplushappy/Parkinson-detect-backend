@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from database import MONGOCLIENT
+from database import MONGODB
 from subject.subject import router as subject_router
 from result import router as result_router
 from video import router as video_router
@@ -21,8 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.client = MONGOCLIENT
-app.db = app.client
+# app.client = MONGODB
+# app.db = app.client
+app.db = MONGODB
 
 app.include_router(auth_router, tags=["login"], prefix="/auth")
 app.include_router(subject_router, tags=["subject"], prefix="/subject")

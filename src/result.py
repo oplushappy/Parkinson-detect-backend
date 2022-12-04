@@ -6,6 +6,10 @@ from model import Result
 
 router = APIRouter()
 
+# # @router.post()
+# def detect_type(type: str):
+
+
 @router.post("/")
 def save_result(request: Request, result: Result):
     result = result.dict()

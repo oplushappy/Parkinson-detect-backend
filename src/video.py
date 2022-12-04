@@ -11,6 +11,7 @@ from fastapi.encoders import jsonable_encoder
 
 from model import Video
 from auth.method import get_current_user
+from subject.method import decode_jwt
 
 router = APIRouter()
 
@@ -24,27 +25,30 @@ router = APIRouter()
 
 @router.post("/uploadFile/fake")
 async def upload(request: Request, information: str = Form(), file: UploadFile = Form()):
-    imgBytes = file.file.read()
-    imgname = file.filename
+    video = await file.read() #.file
+    video_name = file.filename
     save_path = "../testdir/files"
 
     if not os.path.exists(save_path):
         os.mkdir(save_path)
-    with open('{}/{}'.format(save_path ,imgname), "wb") as f:
-        f.write(imgBytes)
-    information = json.loads(information)
-    jwt_token = information["access_token"]
-    path = jsonable_encoder(pathlib.Path(imgname).absolute())
-    date = jsonable_encoder(information["date"])
+    with open('{}/{}'.format(save_path ,video_name), "wb") as f:
+        f.write(video)
+    
+    # information = json.loads(information)
+    # jwt_token = information["access_token"]
+    # print(await get_current_user(jwt_token))
+    username = decode_jwt(information)
 
-    print(await get_current_user(jwt_token))
+
+    path = jsonable_encoder(pathlib.Path(video_name).absolute())
+    date = jsonable_encoder(information["date"])
     video = {
-        "video_name": imgname,
+        "video_name": video_name,
         "video_path": path,
         "date": date,
         "location": information["location"]
     }
-    result = request.app.db.video.insert_one(video)
+    result = request.app.db.video["username"].insert_one(video)
     return "ok"
 
 
