@@ -1,6 +1,6 @@
 from typing import Union
 from bson import ObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Token(BaseModel):#返回給用戶token
     access_token: str
@@ -15,9 +15,8 @@ class User(BaseModel):
     email: Union[str, None] = None
     full_name: Union[str, None] = None
     disabled: Union[bool, None] = None
-    real_name: str
-    gender: str
-    age: int = Field(..., gt=0, lt=100)
+    gender: Union[str, None] = None
+    age: int = Field(None, gt=0, lt=100)
 
 
 class UserInDB(User):

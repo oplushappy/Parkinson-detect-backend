@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from database import MONGODB
 from subject.subject import router as subject_router
-from result import router as result_router
-from video import router as video_router
+from result import router as video_router
+# from video import router as video_router
 from auth.auth import router as auth_router
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,7 +48,7 @@ async def verify_token(request:Request,call_next):
 
 app.include_router(subject_router, tags=["subject"], prefix="/subject")
 app.include_router(video_router, tags=["video"], prefix="/video")
-app.include_router(result_router, tags=["result"], prefix="/result")
+# app.include_router(result_router, tags=["result"], prefix="/result")
 
 
 
