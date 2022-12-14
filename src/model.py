@@ -15,17 +15,10 @@ class Result(BaseModel):
     right: int
 
 class Video(BaseModel):
-    owner_id: str
+    user_id: str
     video_name: str
     video_path: str
     date: datetime.date
     location: str
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "date": "2022-10-23",
-                "location": "hospital"
-            }
-        }
 

@@ -8,7 +8,7 @@ def decode_jwt(information):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"authorization": "Bearer"},
     )
     try:
         # information = json.loads(information)
@@ -23,7 +23,7 @@ def decode_jwt(information):
     except JWTError:
         raise credentials_exception
     
-    return {username, id} 
+    return {username:username, id:id} 
 
 def form_change_to_json(information: str):
     information = json.loads(information)

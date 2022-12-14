@@ -7,17 +7,18 @@ class Subject(BaseModel):
     gender: str
     age: int = Field(..., gt=0, lt=100)
 
-class Video(BaseModel):
-    owner_id: str
-    video_name: str
-    video_path: str
-    date: datetime.date
-    location: str
+class UserPersonalData(BaseModel):
+    real_name: str
+    gender: str
+    age: int = Field(..., gt=0, lt=100)
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "date": "2022-10-23",
-                "location": "hospital"
-            }
-        }
+class Video(BaseModel):
+    video_id: str
+    user_id: str
+    subject: str
+    gender: str
+    detect: str
+    video_name: str
+    video_path: str    
+    date: str
+    location: str

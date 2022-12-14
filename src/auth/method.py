@@ -5,6 +5,9 @@ from constant import SECRET_KEY, ALGORITHM, pwd_context, oauth2_scheme
 from jose import jwt, JWTError
 from auth.model import UserInDB, User, TokenData
 from database import MONGODB
+from bson import ObjectId
+from fastapi.encoders import jsonable_encoder
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()#copy一份，進行編碼
@@ -12,7 +15,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(minutes=1440)
     to_encode.update({"exp": expire})
     
     encoded_jwt = jwt.encode(to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
@@ -24,6 +27,8 @@ def get_user(user_db_collection, username: str):
     user = user_db_collection.find_one({"username": username})
     if user:
         user_dict = user
+        user_dict["uid"] = str(user["_id"])
+        print(UserInDB(**user_dict))
         return UserInDB(**user_dict)#使參數變為dict
 
 #驗整密碼
@@ -42,17 +47,12 @@ def authenticate_user(user_db_collection, username: str, password: str):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-#驗整密碼
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"authorization": "Bearer"},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
