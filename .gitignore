@@ -2,3 +2,4 @@ __pycache__/
 testdir/
 .idea/
 secret_key
+tets.http

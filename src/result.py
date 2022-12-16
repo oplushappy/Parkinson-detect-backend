@@ -62,11 +62,13 @@ async def upload(request: Request, information: str = Form(), file: UploadFile =
         "location": information["location"],
         "video_name": video_name,
         "video_path": path,
-        "left": openpose_result[0]['left'],
-        "right": openpose_result[0]['right']
+        # "left": openpose_result[0]['left'],
+        # "right": openpose_result[0]['right']
+        "left": openpose_result[0].get('left'),
+        "right": openpose_result[0].get('right'),
     }
     result = request.app.db.video.insert_one(result_video) 
-    return {"left": openpose_result[0]['left'],"right": openpose_result[0]['right']}
+    return status.HTTP_200_OK
 
 
 def process(video_name : str):

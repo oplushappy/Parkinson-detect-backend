@@ -20,5 +20,9 @@ class Video(BaseModel):
     detect: str
     video_name: str
     video_path: str    
+    thumbnail_url: str
     date: str
     location: str
+    left: str
+    right: str
+    

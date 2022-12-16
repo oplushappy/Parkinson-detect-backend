@@ -17,6 +17,7 @@ class User(BaseModel):
     disabled: Union[bool, None] = None
     gender: Union[str, None] = None
     age: int = Field(None, gt=0, lt=100)
+    verify: bool
 
 
 class UserInDB(User):

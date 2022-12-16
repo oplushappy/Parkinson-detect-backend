@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from database import MONGODB
 from subject.subject import router as subject_router
-from result import router as video_router
-# from video import router as video_router
+#from result import router as video_router
+from video import router as video_router
 from auth.auth import router as auth_router
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,15 +34,18 @@ app.include_router(auth_router, tags=["login"], prefix="/auth")
 
 @app.middleware("http")
 async def verify_token(request:Request,call_next):
+    print("verify...")
     if "authorization" in request.headers.keys():
         try:
             raw = request.headers["authorization"].split(' ')[-1]
             payload = jwt.decode(raw, SECRET_KEY, algorithms=[ALGORITHM])
             request.state.username: str = payload["sub"]
             request.state.id: str = payload["id"]
-        except Exception as error:
-            # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail=error)
-            print("ok")
+            print("verified")
+        except Exception as error:  #maybe no username id 
+            return status.HTTP_401_UNAUTHORIZED
+        if not payload.get("verify", False):
+            raise HTTPException(status_code=401, detail="email not verified")
     response = await call_next(request)
     return response
 
