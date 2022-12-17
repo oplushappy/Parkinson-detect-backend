@@ -75,7 +75,12 @@ async def upload(request: Request, information: str = Form(), file: UploadFile =
         "right": 0
     }
     result = request.app.db.video.insert_one(video) 
+
+    # openpose_result = process(video_name)
+    # request.app.db.video.find_one_and_update(
+    #   {"user_id": request.state.id},
+    #   {"$set": {"left": openpose_result[0].get('left'),
+    #             "right": openpose_result[0].get('right')}},
+    #
+    # )
     return status.HTTP_201_CREATED
-
-
-

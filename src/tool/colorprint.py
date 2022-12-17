@@ -10,4 +10,4 @@ class bcolor:
   UNDERLINE = '\033[4m'
 
 def Cprint(text, color):
-  print(color + text + bcolor.ENDC)
+  print(color + str(text) + bcolor.ENDC)

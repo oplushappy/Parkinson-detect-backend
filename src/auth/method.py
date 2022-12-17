@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import re
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from constant import SECRET_KEY, ALGORITHM, pwd_context, oauth2_scheme
@@ -25,12 +26,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 # used in signin
 def authenticate_user(user_db_collection, username: str, password: str):
-    user = get_user(user_db_collection, username)
-    if not user:  #check whether user exists
-        return False
+    if re.search(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', username):
+        username = username.lower()
+        user = get_email(user_db_collection, email=username)
+    else:
+        user = get_user(user_db_collection, username=username)
     if not verify_password(password, user.hashed_password):  #if exist check whether be smae with hash_password
         return False
     return user
+
+
+def get_email(user_db_collection, email: str):
+    user = user_db_collection.find_one({"email": email})
+    if user:
+        user_dict = user
+        user_dict["uid"] = str(user["_id"])
+        return UserInDB(**user_dict)#使參數變為dict
+    return None
 
 def get_user(user_db_collection, username: str):
     user = user_db_collection.find_one({"username": username})
@@ -39,6 +51,7 @@ def get_user(user_db_collection, username: str):
         user_dict["uid"] = str(user["_id"])
         return UserInDB(**user_dict)#使參數變為dict
                 # also return hash password to let use verify_password function
+    return None
 
 # use user provide plain password to verify
 def verify_password(plain_password, hashed_password):
