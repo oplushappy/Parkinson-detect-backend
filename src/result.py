@@ -1,7 +1,7 @@
 # import logging
 # from fastapi.responses import JSONResponse
 # # import openposeTest
-from fastapi import APIRouter, Request, Form, status, UploadFile
+from fastapi import APIRouter, Request, Form, status, UploadFile, BackgroundTasks
 import os
 from moviepy.editor import * 
 from subject.method import form_change_to_json
@@ -15,45 +15,65 @@ import rotation as ra
 import leg
 import fingertapping as ft
 import handmovement as hm
+import os
+import subprocess
+from subject.method import form_change_to_json
+from tool.colorprint import Cprint, bcolor
 
 router = APIRouter()
 
-@router.post("/uploadFile/fake",status_code=status.HTTP_201_CREATED)
-async def upload(request: Request, information: str = Form(), file: UploadFile = Form()):
-# def upload(file : UploadFile, date: str, detect_type: str, user_id: str):
-    img_bytes = await file.read()
-    img_name = file.filename
-    save_path = "./testdir/files"
-                  
+def define_detect_type(detect):
+    if (detect == '手指拍打'):
+        return 't23'
+    if (detect == '手掌握合'):
+        return't24' 
+    if (detect == '前臂迴旋'):
+        return 't25'
+    if (detect == '抬腳'):
+        return 't26'
+    raise status.HTTP_400_BAD_REQUEST 
+
+def generate_video_name(date, detect, ext):
+    return "{}_{}_{}.{}".format(
+        date, 
+        uuid.uuid4() , 
+        define_detect_type(detect),
+        ext
+    )
+
+@router.post("/uploadFile/fake")
+async def upload(background_tasks:BackgroundTasks,request: Request, information: str = Form(), file: UploadFile = Form()):    
+    save_path = "../testdir/files"
+    information = form_change_to_json(information)
+
+    # naming
+    VIDEO_EXT = "mov"
+    video_name = generate_video_name(
+        information.get("date").replace(" ", "-").replace(":", "-"), 
+        information.get("detect"),
+        VIDEO_EXT
+    )
+    Cprint("text", bcolor.HEADER)
+
+    print("Start to save file")
     if not os.path.exists(save_path):
         os.mkdir(save_path)
-    with open('{}/{}'.format(save_path ,img_name), "wb") as f:
-        f.write(img_bytes)
+    with open('{}/{}'.format(save_path ,video_name), "wb") as f:
+        while contents := file.file.read(1024*1024):
+            f.write(contents)
+    print("File Saved")
 
-    information = form_change_to_json(information);    
-    if (information["detect"] == 'FT'):
-        file_type = 't23'
-    elif (information["detect"] == 'HM'):
-        file_type = 't24' 
-    elif (information["detect"] == 'LA'):
-        file_type = 't25'
-    elif (information["detect"] == 'RAMOH'):
-        file_type = 't26'
-    else:
-        return status.HTTP_400_BAD_REQUEST 
-    
-    os.chdir("./testdir/files/")
-    video = VideoFileClip(img_name)
-    video_id = uuid.uuid4()
-    output = video.copy()
-    output.write_videofile(f'{information["date"]}_{video_id}_{file_type}.mov',temp_audiofile="temp-audio.m4a", remove_temp=True, codec="libx264", audio_codec="aac")
-    video_name = f'{information["date"]}_{video_id}_{file_type}.mov'
-    os.chdir('../../')
-    
-    openpose_result = process(video_name)
-    
-    path = str(pathlib.Path(video_name).absolute())
-    result_video = {
+
+    path = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
+    path = os.path.join(path, "testdir", "files", video_name)
+    path = str(path)
+    thumbnail_path = path.rsplit(".", 1)[0] + "_thumbnail.jpg"
+    print(path, "\n", thumbnail_path)
+    print("Dealing with ffmpeg thumbnail proccess")
+    subprocess.run(["ffmpeg", "-i", path, "-ss", "3", "-vframes", "1", thumbnail_path])
+    print("Complete!")
+
+    video = {
         "user_id": request.state.id,
         "subject": information["name"],
         "gender":information["gender"],
@@ -62,13 +82,77 @@ async def upload(request: Request, information: str = Form(), file: UploadFile =
         "location": information["location"],
         "video_name": video_name,
         "video_path": path,
-        # "left": openpose_result[0]['left'],
-        # "right": openpose_result[0]['right']
-        "left": openpose_result[0].get('left'),
-        "right": openpose_result[0].get('right'),
+        "thumbnail_path": thumbnail_path,
+        "left": 0,
+        "right": 0
     }
-    result = request.app.db.video.insert_one(result_video) 
-    return status.HTTP_200_OK
+    result = request.app.db.video.insert_one(video) 
+    
+    #Todo
+    # background_tasks.add_task(
+    #
+    # )
+    openpose_result = process(video_name)
+    request.app.db.video.find_one_and_update(
+      {"user_id": request.state.id},
+      {"$set": {"left": openpose_result[0].get('left'),
+                "right": openpose_result[0].get('right')}},
+        upsert=True
+    )
+    return status.HTTP_201_CREATED
+
+
+# @router.post("/uploadFile/fake",status_code=status.HTTP_201_CREATED)
+# async def upload(request: Request, information: str = Form(), file: UploadFile = Form()):
+# # def upload(file : UploadFile, date: str, detect_type: str, user_id: str):
+#     img_bytes = await file.read()
+#     img_name = file.filename
+#     save_path = "./testdir/files"
+                  
+#     if not os.path.exists(save_path):
+#         os.mkdir(save_path)
+#     with open('{}/{}'.format(save_path ,img_name), "wb") as f:
+#         f.write(img_bytes)
+
+#     information = form_change_to_json(information);    
+#     if (information["detect"] == 'FT'):
+#         file_type = 't23'
+#     elif (information["detect"] == 'HM'):
+#         file_type = 't24' 
+#     elif (information["detect"] == 'LA'):
+#         file_type = 't25'
+#     elif (information["detect"] == 'RAMOH'):
+#         file_type = 't26'
+#     else:
+#         return status.HTTP_400_BAD_REQUEST 
+    
+#     os.chdir("./testdir/files/")
+#     video = VideoFileClip(img_name)
+#     video_id = uuid.uuid4()
+#     output = video.copy()
+#     output.write_videofile(f'{information["date"]}_{video_id}_{file_type}.mov',temp_audiofile="temp-audio.m4a", remove_temp=True, codec="libx264", audio_codec="aac")
+#     video_name = f'{information["date"]}_{video_id}_{file_type}.mov'
+#     os.chdir('../../')
+    
+#     openpose_result = process(video_name)
+    
+#     path = str(pathlib.Path(video_name).absolute())
+#     result_video = {
+#         "user_id": request.state.id,
+#         "subject": information["name"],
+#         "gender":information["gender"],
+#         "detect":information["detect"],
+#         "date": information["date"],
+#         "location": information["location"],
+#         "video_name": video_name,
+#         "video_path": path,
+#         # "left": openpose_result[0]['left'],
+#         # "right": openpose_result[0]['right']
+#         "left": openpose_result[0].get('left'),
+#         "right": openpose_result[0].get('right'),
+#     }
+#     result = request.app.db.video.insert_one(result_video) 
+#     return status.HTTP_200_OK
 
 
 def process(video_name : str):
