@@ -1,5 +1,5 @@
 # mongo-fastapi
-use pymogon and fastapi to achieve the following :
+use pymogo and fastapi to achieve the following :
 
 1. signup
 
