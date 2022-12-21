@@ -92,6 +92,7 @@ async def signin(request: Request, form_data: OAuth2PasswordRequestForm = Depend
     del user["hashed_password"]
     returnToken = {"access_token": access_token, "token_type": "Bearer"} 
     return  user | returnToken    #return access token to let frontend put access token to header bearer
+    # return  user and returnToken
 
 @router.get("/change/password")
 async def changepassword(backrgound_tasks: BackgroundTasks, request: Request, email: str):

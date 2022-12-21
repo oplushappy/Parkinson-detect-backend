@@ -46,6 +46,7 @@ async def upload(background_tasks:BackgroundTasks,request: Request, information:
     save_path = "../testdir/files"
     information = form_change_to_json(information)
 
+    contents = file.file.read()
     # naming
     VIDEO_EXT = "mov"
     video_name = generate_video_name(
@@ -59,7 +60,7 @@ async def upload(background_tasks:BackgroundTasks,request: Request, information:
     if not os.path.exists(save_path):
         os.mkdir(save_path)
     with open('{}/{}'.format(save_path ,video_name), "wb") as f:
-        while contents := file.file.read(1024*1024):
+        # while contents := file.file.read(1024*1024):
             f.write(contents)
     print("File Saved")
 

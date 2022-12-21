@@ -29,8 +29,12 @@ def authenticate_user(user_db_collection, username: str, password: str):
     if re.search(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', username):
         username = username.lower()
         user = get_email(user_db_collection, email=username)
+        if user is None:
+            return False
     else:
         user = get_user(user_db_collection, username=username)
+        if user is None:
+            return False
     if not verify_password(password, user.hashed_password):  #if exist check whether be smae with hash_password
         return False
     return user
