@@ -15,9 +15,13 @@ uvicorn main:app --reload
 
 2. quick to open website
 run on linux enviromeent
+
 revise mongodb part to use yourself account
+
 `pip install -r requirements.txt`
+
 open the front end
+
 `uvicorn main:app --host x.x.x.x --port 52697`
 
 ## Functions
