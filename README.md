@@ -13,7 +13,8 @@ cd src
 uvicorn main:app --reload
 ```
 
-2. quick to open website
+2. quick to open website :
+
 run on linux enviromeent
 
 revise mongodb part to use yourself account
@@ -33,7 +34,7 @@ It will sent email to verify
 3. Change Password :
 It will sent email to verify
 
-4.Change Name :
+4. Change Name :
 Can direct revise
 
 5. Upload Video :
