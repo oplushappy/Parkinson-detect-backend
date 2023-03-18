@@ -19,6 +19,7 @@ uvicorn main:app --reload
 
 2. quick to open website :
 - run on linux enviromeent
+- cd run_on_linux/src
 - revise mongodb part to use yourself account
 - `pip install -r requirements.txt`
 - open the front end
@@ -39,18 +40,23 @@ It will sent email to verify
 2. Sign In
 
 3. Change Password :
+
 It will sent email to verify
 
 4. Change Name :
+
 Can direct revise
 
 5. Upload Video :
+
 Vedio will play if mouse put in vedio
 
-6. List Videos and Show Results
+6. List Videos and Show Results :
+
 Will sort by date and have a filter 
 
-7. Change Video Information
+7. Change Video Information:
+
 you can change your name, date
 
 8. Show the Activity of Parkinson in Taiwan
