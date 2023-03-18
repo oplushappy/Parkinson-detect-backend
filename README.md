@@ -6,6 +6,10 @@ Achieve a website it can help old people to detect parksion.
 ## front end
 [DACHXY/parkinson](https://github.com/DACHXY/parkinson)
 
+## Download
+Because file 400 MB , so I put the version in google cloud
+[parkinson-project.zip](https://drive.google.com/file/d/1L6M6fWrNMYweD8bYPfMhdl8FhOKVppI3/view)
+
 ## How to use :
 1. quick to see backend
 ```
