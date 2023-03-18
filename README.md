@@ -1,4 +1,4 @@
-# mongo-fastapi
+# Parkinson Detect Website
 
 ## Goal
 Achieve a website it can help old people to detect parksion.
@@ -18,16 +18,19 @@ uvicorn main:app --reload
 ```
 
 2. quick to open website :
+- run on linux enviromeent
+- revise mongodb part to use yourself account
+- `pip install -r requirements.txt`
+- open the front end
+- `uvicorn main:app --host x.x.x.x --port 52697`
 
-run on linux enviromeent
+## How to implement:
+- React
+- Pytorch with Caffe
+- FastApi
+- MongoDB(pymongo)
+- Openpose
 
-revise mongodb part to use yourself account
-
-`pip install -r requirements.txt`
-
-open the front end
-
-`uvicorn main:app --host x.x.x.x --port 52697`
 
 ## Functions
 1. Sign Up :
@@ -56,4 +59,4 @@ you can change your name, date
 
 1. Detect 手指拍打 手掌握合 抬腳 前臂迴旋
 
-2. Upload a Video with some Action , it will return a value 
+2. Upload a Video with corresponding Action , Age , gender, it will return a value. 
