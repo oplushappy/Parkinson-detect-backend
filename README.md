@@ -42,12 +42,12 @@ detail in auth (Dir)
 4. Change Name : revise user name
 
 detail in subject.py and video_result (Dir)
-5. Upload Video : Vedio will play if mouse put in vedio
-6. List Videos and Show Results : which sort by date and have a filter 
-7. Change Video Information: change user name, date, detect place
+1. Upload Video : Vedio will play if mouse put in vedio
+2. List Videos and Show Results : which sort by date and have a filter 
+3. Change Video Information: change user name, date, detect place
 
 detail in activity (Dir)
-8. Show the Activity of Parkinson in Taiwan
+1. Show the Activity of Parkinson in Taiwan
 
 ## Openpose model :
 
