@@ -34,20 +34,19 @@ uvicorn main:app --reload
 
 
 ## Functions
-1. Sign Up :sent email to verify and create account
 
+detail in auth (Dir)
+1. Sign Up : sent email to verify and create account
 2. Sign In : By username and password
-
 3. Change Password :sent email to verify and then revise password
-
 4. Change Name : revise user name
 
+detail in subject.py and video_result (Dir)
 5. Upload Video : Vedio will play if mouse put in vedio
-
 6. List Videos and Show Results : which sort by date and have a filter 
-
 7. Change Video Information: change user name, date, detect place
 
+detail in activity (Dir)
 8. Show the Activity of Parkinson in Taiwan
 
 ## Openpose model :
